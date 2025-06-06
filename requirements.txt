@@ -15,3 +15,4 @@ Pillow==10.2.0
 xhtml2pdf==0.2.8
 
 gunicorn
+reportlab==3.6.12
