@@ -1,0 +1,122 @@
+{% extends 'layout.html' %}
+{% block content %}
+
+{% set from_page = request.args.get('from') %}
+<div class="container border rounded shadow-sm p-4 bg-white" style="max-width: 1000px;">
+
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h5 class="section-title">Customer Profile</h5>
+ <div>
+    {% if from_page == 'users' %}
+      <a href="/admin/users" class="btn btn-dark me-2">
+        <i class="bi bi-arrow-left"></i> Back to Users
+      </a>
+    {% else %}
+      <a href="/admin/orders" class="btn btn-dark me-2">
+        <i class="bi bi-arrow-left"></i> Back to Manage Orders
+      </a>
+    {% endif %}
+  </div>
+  </div>
+
+<div class="container my-2 text-center border rounded shadow-sm p-3 bg-white" >
+
+<div class="d-flex align-items-center gap-3 flex-grow-1 text-center justify-content-center lab">
+      <p class="menu-style"><strong>Name:</strong> {{ customer.name }}</p>
+      <p class="menu-style"><strong>Email:</strong> {{ customer.email }}</p>
+      <p class="menu-style"><strong>Phone:</strong> {{ customer.phone }}</p>
+      <p class="menu-style"><strong>Joined:</strong> {{ customer.created_at.strftime('%d %b %Y') }}</p>
+  </div>
+
+  <h5 class="section-title">Address Book</h5>
+  <ul class="list-group mb-4">
+    {% for addr in customer.addresses %}
+    <li class="list-group-item">
+      {{ addr.name }}, {{ addr.line1 }}, {{ addr.city }} - {{ addr.pincode }}
+    </li>
+    {% else %}
+    <li class="list-group-item text-muted">No addresses available.</li>
+    {% endfor %}
+  </ul>
+
+<h5 class="section-title">Order History</h5>
+<table class="table table-bordered text-center">
+  <thead class="table-warning menu-style">
+    <tr>
+      <th>S.No</th>
+      <th>Order ID</th>
+      <th>Status</th>
+      <th>Amount</th>
+      <th>Placed On</th>
+    </tr>
+  </thead>
+  <tbody class="label-style">
+    {% for order in orders %}
+    <tr>
+    <td>{{ (pagination.page - 1) * pagination.per_page + loop.index }}</td>
+    <td><a href="/admin/order/{{ order.id }}">{{ order.order_id }}</a></td>
+      <td>{{ order.status }}</td>
+      <td>₹{{ "%.2f"|format(order.total_amount) }}</td>
+      <td>{{ order.created_at.strftime('%d-%b-%Y') }}</td>
+    </tr>
+    {% else %}
+    <tr>
+      <td colspan="5" class="text-muted">No orders found.</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<!-- Pagination Controls -->
+{% if pagination.pages > 1 %}
+<nav aria-label="Page navigation" class="mt-4">
+  <ul class="pagination justify-content-center custom-pagination">
+
+    {# First + Previous #}
+    {% if pagination.has_prev %}
+      <li class="page-item">
+        <a class="page-link" href="{{ url_for('admin_customer_profile', customer_id=customer.id, page=1, from=from_page) }}">&laquo;</a>
+      </li>
+      <li class="page-item">
+        <a class="page-link" href="{{ url_for('admin_customer_profile', customer_id=customer.id, page=pagination.prev_num, from=from_page) }}">Previous</a>
+      </li>
+    {% else %}
+      <li class="page-item disabled"><span class="page-link">&laquo;</span></li>
+      <li class="page-item disabled"><span class="page-link">Previous</span></li>
+    {% endif %}
+
+    {# Page numbers with ellipsis #}
+    {% for page_num in pagination.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=1) %}
+      {% if page_num %}
+        {% if page_num == pagination.page %}
+          <li class="page-item active"><span class="page-link">{{ page_num }}</span></li>
+        {% else %}
+          <li class="page-item">
+            <a class="page-link" href="{{ url_for('admin_customer_profile', customer_id=customer.id, page=page_num, from=from_page) }}">{{ page_num }}</a>
+          </li>
+        {% endif %}
+      {% else %}
+        <li class="page-item disabled"><span class="page-link">…</span></li>
+      {% endif %}
+    {% endfor %}
+
+    {# Next + Last #}
+    {% if pagination.has_next %}
+      <li class="page-item">
+        <a class="page-link" href="{{ url_for('admin_customer_profile', customer_id=customer.id, page=pagination.next_num, from=from_page) }}">Next</a>
+      </li>
+      <li class="page-item">
+        <a class="page-link" href="{{ url_for('admin_customer_profile', customer_id=customer.id, page=pagination.pages, from=from_page) }}">&raquo;</a>
+      </li>
+    {% else %}
+      <li class="page-item disabled"><span class="page-link">Next</span></li>
+      <li class="page-item disabled"><span class="page-link">&raquo;</span></li>
+    {% endif %}
+
+  </ul>
+</nav>
+{% endif %}
+
+</div>
+</div>
+{% endblock %}

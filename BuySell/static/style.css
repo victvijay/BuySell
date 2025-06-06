@@ -1,0 +1,636 @@
+html, body {
+  height: 100%;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+main {
+  flex: 1;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f8f9fa;
+}
+
+/* HEADER */
+.header {
+  background-color: #343a40;
+}
+.header .logo img {
+  display: block;
+}
+.header .store-name {
+  color: #ffffff;
+}
+.header .menu .nav-link {
+  color: #ffffff;
+  margin: 0 10px;
+}
+.header .menu .nav-link:hover,
+.header .menu .dropdown-toggle:hover {
+  color: #adb5bd;
+}
+.header .icons .search-bar input {
+  width: 100%;
+  max-width: 180px;
+}
+.header .icons .search-bar .btn {
+  border: 1px solid #ffffff;
+}
+.header .icons a {
+  color: #ffffff;
+}
+.header .cart-count {
+  font-size: 0.75rem;
+}
+
+.label-style{
+    font-family: "Garamond", serif;
+    font-size: 1rem;
+    font-weight: 600;              /* same as fw-semibold */
+}
+
+.menu-style{
+    font-family: "Garamond", serif;
+    font-size: 1.25rem;
+    font-weight: 600;              /* same as fw-semibold */
+}
+.section-title {
+  margin-bottom: 1.5rem;
+  font-family: "Garamond", serif;
+  text-align: center;            /* same as text-center */
+  font-weight: 600;              /* same as fw-semibold */
+}
+ 
+/* SHOP BY CATEGORY BUTTON - Keep black even on hover */
+.shop-category-btn {
+  background-color: #000 !important;
+  color: #fff !important;
+  border: none;
+  border-radius: 4px;
+}
+
+.shop-category-btn:hover {
+  background-color: #000 !important;
+  color: #fff !important;
+}
+
+/* DROPDOWN MENU BACKGROUND */
+.shop-category-btn {
+  background-color: #000;
+  color: #fff;
+  font-weight: 600;
+  font-size: 1rem;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 4px;
+}
+
+.shop-category-btn:hover,
+.shop-category-btn:focus {
+  background-color: #222;
+  color: #fff;
+  box-shadow: none;
+}
+
+.shop-category-menu {
+  background-color: #fff8dc; /* Light yellow */
+  border: 1px solid #ccc;
+}
+
+/* MENU ITEMS */
+.shop-category-menu .dropdown-item {
+  background-color: transparent;
+  color: #000;
+  font-weight: 500;
+}
+
+/* HOVER EFFECT ON MENU ITEMS */
+.shop-category-menu .dropdown-item:hover {
+  background-color: #000;
+  color: #fff;
+}
+
+  .dropdown-item.active-category {
+    background-color: #000 !important;
+    color: #fff !important;
+    font-weight: bold;
+  }
+
+  .dropdown-submenu {
+  position: relative;
+}
+
+.dropdown-submenu > .dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -1px;
+  display: none;
+  min-width: 180px;
+  background-color: #fff8dc; /* light yellow */
+}
+
+.dropdown-submenu:hover > .dropdown-menu {
+  display: block;
+}
+.dropdown-menu {
+  border-radius: 0;
+}
+.dropdown-submenu > .dropdown-toggle::after {
+  display: none !important;
+}
+
+/* Add your custom right arrow */
+.dropdown-submenu > .dropdown-toggle::before {
+  content: "▶";
+  float: right;
+  margin-left: 0.5rem;
+  font-size: 0.75rem;
+  color: #000;
+}
+
+.dropdown-submenu > a::after {
+  content: "▶";
+  float: right;
+  margin-left: 0.5rem;
+  font-size: 0.7rem;
+}
+
+/******* PRODUCT CARD ************/
+.product-img {
+  width: 100%;
+  height: 150px;
+  object-fit: contain; /* ✅ Keeps aspect ratio */
+  object-position: center;
+  padding: 8px; /* Optional padding around image */
+}
+
+.product-click-area {
+  cursor: pointer;
+}
+
+.add-cart-btn {
+  cursor: default !important;
+}
+
+/* Modal Header */
+.modal-header {
+  border-bottom: none;
+}
+
+/* Modal Close Button */
+.modal-header .btn-outline-light {
+  font-size: 0.85rem;
+  padding: 4px 8px;
+  line-height: 1;
+}
+
+.modal-title {
+  font-weight: 600;
+  font-size: 1.2rem;
+  letter-spacing: 0.5px;
+  font-family: "Garamond", serif;
+
+}
+
+/* Description List */
+#modalDescription li {
+  margin-bottom: 5px;
+  color: #333;
+}
+
+/* Optional: Smooth fade for modal */
+.modal-content {
+  transition: all 0.3s ease-in-out;
+  border-radius: 8px;
+}
+
+.card.h-100 {
+  padding: 0.5rem;
+  font-size: 0.92rem;
+}
+
+.card-img-top {
+  height: 100px !important;     /* reduced from 150px */
+  object-fit: contain;
+  padding: 6px;
+}
+
+.card-body .btn {
+  padding: 4px 12px;
+  font-size: 0.85rem;
+}
+
+.card-title {
+  font-size: 1rem;
+  margin-bottom: 0.25rem;
+}
+
+.card-text {
+  font-size: 0.9rem;
+  margin-bottom: 0.25rem;
+}
+
+
+/******* PRODUCT CARD ************/
+
+
+/* SIDEBAR */
+.sidebar {
+  background-color: #ffffff;
+  padding: 15px;
+  border: 1px solid #dee2e6;
+  border-radius: 5px;
+}
+.sidebar h5 {
+  margin-bottom: 15px;
+}
+.sidebar .list-group-item {
+  cursor: pointer;
+}
+.sidebar .list-group-item:hover {
+  background-color: #f1f1f1;
+}
+/****** Add address card **********/
+#add-card {
+  cursor: pointer;
+  border: 2px dashed #ccc;
+  transition: background-color 0.2s ease;
+}
+#add-card:hover {
+  background-color: #fff8dc;
+}
+/****** Add address card **********/
+
+/* FOOTER */
+.footer {
+  margin-top: auto;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .header .menu { display: none; }
+  .product-grid .product-card { width: calc(50% - 10px); }
+}
+@media (max-width: 576px) {
+  .header .icons .search-bar { display: none; }
+  .product-grid .product-card { width: 100%; }
+}
+
+/* index.html *******************/
+.logo img{
+ /* font-family: 'Segoe UI', sans-serif;
+  letter-spacing: 1px;*/
+  width: 160px;     /* Or whatever size you prefer */
+  height: auto;     /* Maintains aspect ratio */
+  object-fit: contain;  /* Ensures image fits nicely */
+}
+
+.menu-bar .nav-link {
+  padding: 0 1rem;
+  font-weight: 600;
+}
+
+.dropdown-menu {
+  min-width: 180px;
+}
+
+.card .btn {
+  font-size: 0.9rem;
+}
+
+.card span {
+  font-weight: 500;
+  font-size: 1rem;
+}
+
+.card img {
+  object-fit: contain;
+  height: 200px;
+}
+
+.card-body .btn {
+  white-space: nowrap;
+}
+
+a.text-dark.text-decoration-none:hover {
+  color: #000; /* keeps it black on hover */
+  text-decoration: none;
+}
+.search-box input {
+  height: 44px;
+  border-right: none; 
+}
+
+.input-group-text {
+  border-left: none;
+  cursor: pointer;
+}
+
+.input-group-text i {
+  font-size: 1.1rem;
+}
+
+.dropdown-toggle::after {
+  margin-left: 0.5rem;
+}
+
+.dropdown-menu {
+  min-width: 200px;
+}
+
+.search-box input:focus {
+  border-color: #000 !important;
+  box-shadow: 0 0 0 0.2rem rgba(0, 0, 0, 0.25) !important;
+}
+
+.search-box input:hover {
+  border-color: #000 !important;
+}
+
+.btn-dark {
+  background-color: #000;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+}
+ 
+.btn-dark:hover {
+  background-color: #ffc107 !important; 
+  color: #000 !important;
+  border-color: #d3d3d3 !important;
+}
+
+.box-wrapper {
+  border: 1px solid #dee2e6;  /* same as Bootstrap 'border' */
+  border-radius: 0.25rem;     /* same as 'rounded' */
+  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075); /* 'shadow-sm' */
+  padding: 1.5rem;            /* same as 'p-4' */
+  background-color: #fff;     /* same as 'bg-white' */
+}
+
+
+form input[type="text"],
+form input[type="email"],
+form input[type="password"],
+form textarea {
+  background-color: #fff9db;
+}
+
+form input:focus,
+form textarea:focus {
+    border-color: #000 !important;
+}
+
+form label {
+  font-weight: 400;        /*  Semi-bold */
+  color: #000;              /* Match menu text color */
+  font-size: 14px;          /* Match menu text size */
+  margin-bottom: 0.5rem;    /* Slight spacing */
+  display: inline-block;    /* Consistent alignment */
+}
+
+.cart-link span,
+.track-link span {
+  font-weight: 600;       /* Same as menu */
+  font-size: 1rem;        /* Match nav text size */
+  color: #000;            /* Ensure solid dark text */
+}
+
+.cart-link:hover span,
+.track-link:hover span {
+  text-decoration: underline;
+  color: #000;
+}
+
+.menu-bar .nav-link,
+.cart-link span,
+.track-link span {
+  font-weight: 600;
+  font-size: 1rem;
+  color: #000;
+}
+
+.card:hover {
+  background-color: #f9f9f9;
+  cursor: pointer;
+}
+
+table th {
+  text-align: center;
+  vertical-align: middle;
+}
+
+.qty-minus:hover, .qty-plus:hover {
+  background-color: #212529;
+  color: white;
+}
+.qty-minus, .qty-plus {
+  min-width: 36px;
+  font-weight: bold;
+  cursor: default !important;
+
+}
+#qty {
+  font-size: 1rem;
+}
+.qty-animate {
+  transition: transform 0.15s ease;
+  transform: scale(1.25);
+}
+
+
+/* Strongest override */
+.table thead th {
+  background-color: #ffc107 !important;
+  color: #212529 !important;
+  text-align: center;
+}
+
+/* Light yellow background for dropdown */
+form select[name="status"] {
+  background-color: #fff8dc; /* light yellow */
+  width: auto;               /* Reduce width to content */
+  min-width: 120px;          /* Minimum width */
+}
+
+/* Save (submit) button hover effect */
+form button[type="submit"].btn-success:hover {
+  background-color: #000 !important;
+  border-color: #000 !important;
+  color: #fff !important;
+}
+
+/* Yellow background for the dropdown */
+select.form-select {
+  background-color: #fff9db !important;
+  font-family: "Garamond", serif;
+  font-weight: 600;
+
+}
+
+/* Yellow background for each line in order summary */
+.order-summary p {
+  background-color: #fff9db;
+  padding: 6px 10px;
+  border-radius: 4px;
+}
+
+a.disabled {
+  pointer-events: none;
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.dashboard-card {
+  transition: all 0.3s ease-in-out;
+}
+
+.dashboard-card:hover {
+  transform: translateY(-5px);
+  background-color: #fff8dc; /* Light yellow */
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+}
+
+  .nav-link:hover,
+  .dropdown-item:hover,
+  .shop-category-btn:hover {
+    background-color: #000 !important; /* Black background */
+    color: #fff !important;           /* White text */
+    font-weight: 600;                 /* Bold text */
+    border-radius: 4px;
+    transition: all 0.2s ease-in-out;
+  }
+
+  /******* left side dashboard menu hover **********/
+  .list-group-item a {
+    display: block;
+    /*padding: 8px 12px;*/
+    border-radius: 4px;
+    transition: background-color 0.2s ease-in-out;
+  }
+
+  .list-group-item a:hover {
+    background-color: #fff8dc; /* Light yellow */
+    color: #000;               /* Ensure text stays visible */
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+    .list-group-item:hover,
+  .list-group-item.active-menu {
+    background-color: #fff8dc !important; /* Light yellow */
+    font-weight: 600;
+  }
+  /******* **********/
+
+  .readonly-field {
+    background-color: #f5f5f5; /* Light grey */
+    pointer-events: none;
+    cursor: default;
+  }
+
+  /** contact form scroll bar height */
+  .select2-results__options {
+  max-height: 200px;
+  overflow-y: auto;
+}
+/* Main field */
+.select2-container--default .select2-selection--single {
+  background-color: #fff8dc !important;
+  border: 1px solid #ced4da;
+  height: 38px;
+  padding: 6px 12px;
+  font-size: 1rem;
+}
+
+/* Placeholder text color (optional) */
+.select2-selection__placeholder {
+  color: #6c757d;
+}
+/** contact form scroll bar height */
+
+/*****Pagination style ************** */
+.custom-pagination .page-link {
+  background-color: #ffc107;  /* Bootstrap warning / header yellow */
+  color: #000;
+  border: none;
+  margin: 0 2px;
+  font-weight: 500;
+}
+
+.custom-pagination .page-link:hover {
+  background-color: #000;
+  color: #fff;
+}
+
+.custom-pagination .active .page-link {
+  background-color: #000;
+  color: #fff;
+  font-weight: bold;
+  border: none;
+}
+
+.custom-pagination .disabled .page-link {
+  background-color: #f0f0f0;
+  color: #999;
+}
+
+/****************************************/
+
+/******* Track orfer display ***********/
+  .step {
+    text-align: center;
+    position: relative;
+    z-index: 2;
+    width: 33%;
+  }
+
+  .circle {
+    margin: auto;
+    width: 40px;
+    height: 40px;
+    line-height: 40px;
+    border-radius: 50%;
+    background: #ddd;
+    color: #555;
+    font-weight: bold;
+  }
+
+  .step.active .circle {
+    background: #000;
+    color: #fff;
+  }
+
+   .progress-line-active {
+    transition: width 0.5s ease-in-out;
+  }
+/***************************************/
+/************* check box style ********/
+
+.form-check-input {
+  background-color: #6c757d !important;  /* Bootstrap grey */
+  border-color: #6c757d !important;
+}
+
+.form-check-input:checked {
+  background-color: #ffc107;
+  border-color: #ffc107;
+}
+
+.form-check-label {
+  margin-left: 4px;
+  font-weight: 500;
+}
+/***************************************/
+
+/******* Admin product filter *********/
+@media (max-width: 768px) {
+  #filter-section .flex-grow-1 {
+    flex: 1 1 100%;
+  }
+}
+
+/**************************************/

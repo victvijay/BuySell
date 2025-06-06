@@ -1,0 +1,26 @@
+{% extends 'layout.html' %}
+{% block content %}
+<div class="container my-5 text-center">
+  <h2 class="text-success mb-4 menu-style">🎉 Order Placed Successfully!</h2>
+
+  {% if order_id %}
+    <p class="lead menu-style">Your order ID is <strong>{{ order_id }}</strong></p>
+  {% endif %}
+
+  <p class="text-muted label-style">A confirmation will be sent to your registered email and mobile number.</p>
+
+  <a href="/" class="btn btn-dark mt-3">Continue Shopping</a>
+</div>
+
+<script>
+  // Clear cart from localStorage
+  localStorage.removeItem("cart");
+
+  // Reset cart badge
+  const badge = document.getElementById("cartCount");
+  if (badge) {
+    badge.innerText = "0";
+    badge.style.display = "none";
+  }
+</script>
+{% endblock %}

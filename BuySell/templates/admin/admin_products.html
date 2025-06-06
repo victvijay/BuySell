@@ -1,0 +1,267 @@
+{% extends 'layout.html' %}
+{% block content %}
+
+  <!-- Flash Messages -->
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% for category, message in messages %}
+      <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+    {% endfor %}
+  {% endwith %}
+
+<div class="container border rounded shadow-sm p-4 bg-white" style="max-width: 1200px;">
+
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <div class="label-style"> <a href="{{ url_for('admin_products') }}">Clear all filters</a></div>
+    <h4 id="form-title" class="section-title m-0">Manage Products</h4>
+    <div>
+      <button class="btn btn-dark fw-semibold" onclick="resetFormAndShow(true)">+ Add New</button>
+    </div>
+  </div>
+
+  <!-- Add/Edit Product Form (Hidden by Default) -->
+  <div id="add-form-card" class="mt-4" style="display:none;">
+    <h6 class="section-title" id="form-subtitle">Add New Product</h6>
+    <form id="productForm" method="POST" enctype="multipart/form-data">
+      <div class="row g-3">
+        <div class="col-md-4">
+          <label class="label-style">Name</label>
+          <input type="text" name="name" id="name" class="form-control bg-warning-subtle label-style" required>
+        </div>
+        <div class="col-md-4">
+          <label class="label-style">Price</label>
+          <input type="number" name="price" id="price" class="form-control bg-warning-subtle label-style" step="0.01" required>
+        </div>
+        <div class="col-md-4">
+          <label class="label-style">Stock</label>
+          <input type="number" name="stock" id="stock" class="form-control bg-warning-subtle label-style" required>
+        </div>
+        <div class="col-md-4">
+          <label class="label-style">Category</label>
+          <select name="category_id" id="category_id" class="form-select bg-warning-subtle label-style" required onchange="loadSubcategories(this.value)">
+            <option value="">-- Select --</option>
+            {% for cat in categories %}
+              <option value="{{ cat.id }}">{{ cat.name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="col-md-4">
+          <label class="label-style">Sub-Category</label>
+          <select name="sub_category_id" id="sub_category_id" class="form-select bg-warning-subtle label-style" required disabled>
+            <option value="">-- None --</option>
+          </select>
+        </div>
+        <div class="col-md-4">
+          <label class="label-style">Image</label>
+          <input type="file" name="image" class="form-control bg-warning-subtle label-style" accept="image/*">
+          <small id="currentImage" class="text-muted d-block mt-1"></small>
+        </div>
+        <div class="col-md-4">
+          <label class="label-style">Shipping Charge</label>
+          <input type="number" name="shipping_charge" id="shipping_charge" class="form-control bg-warning-subtle label-style" step="0.01" required>
+        </div>
+        <div class="col-md-12">
+          <label class="label-style">Description</label>
+          <textarea name="description" id="description" class="form-control bg-warning-subtle label-style" rows="3" required></textarea>
+        </div>
+        <div class="col-md-12 text-center mt-3">
+          <button type="button" class="btn btn-outline-secondary px-4" onclick="toggleAddForm(false)">Cancel</button>
+          <button id="formSubmitBtn" class="btn btn-dark px-4 fw-semibold">Add</button>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <!-- Filter and search-->
+<div id="filter-section">
+  <form method="GET" class="d-flex flex-wrap gap-3 justify-content-between align-items-end mb-3">
+
+    <!-- Category Filter -->
+    <div class="flex-grow-1">
+      <label class="label-style">Filter by categories</label>
+      <select name="category_id" class="form-select w-100" onchange="this.form.submit()">
+        <option value="">All Categories</option>
+        {% for cat in categories %}
+          <option value="{{ cat.id }}" {% if selected_category == cat.id %}selected{% endif %}>{{ cat.name }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <!-- Stock Filter -->
+    <div class="flex-grow-1">
+      <label class="label-style">Stock Filter</label>
+      <select name="stock" class="form-select w-100" onchange="this.form.submit()">
+        <option value="">All Stock</option>
+        <option value="zero" {% if selected_stock == 'zero' %}selected{% endif %}>Out of Stock (0)</option>
+        <option value="lt5" {% if selected_stock == 'lt5' %}selected{% endif %}>Stock < 5</option>
+        <option value="lt10" {% if selected_stock == 'lt10' %}selected{% endif %}>Stock < 10</option>
+      </select>
+    </div>
+
+    <!-- Search Box -->
+    <div class="flex-grow-1">
+      <label class="label-style">Search by name</label>
+      <div class="input-group">
+        <input type="text" name="q" value="{{ search_query }}" class="form-control" placeholder="Search by name">
+        <button class="btn btn-outline-secondary" type="submit" title="Search">
+          <i class="bi bi-search"></i>
+        </button>
+      </div>
+    </div>
+
+  </form>
+</div>
+
+  <!----------------------->
+
+<!-- Product Table -->
+<div id="product-table-section" class="container border rounded shadow-sm p-4 bg-white">
+  <h5 class="section-title">Product List</h5>
+  <table class="table table-bordered mb-0"> 
+    <thead class="table-light text-center menu-style">
+      <tr>
+        <th>S.No.</th>
+        <th>Name</th>
+        <th>Price</th>
+        <th>Stock</th>
+        <th>Category</th>
+        <th>Sub-Category</th>
+        <th>Image</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody class="text-center align-middle label-style">
+      {% for p in products %}
+      <tr>
+        <td>{{ (pagination.page - 1) * pagination.per_page + loop.index }}</td>
+        <td>{{ p.name }}</td>
+        <td>₹{{ "%.2f"|format(p.price) }}</td>
+        <td>{{ p.stock }}</td>
+        <td>{{ p.category.name if p.category else '—' }}</td>
+        <td>{{ p.sub_category.name if p.sub_category else '—' }}</td>
+        <td>
+          {% if p.image %}
+            <img src="{{ url_for('static', filename='images/' ~ p.image) }}" 
+                 style="width: 50px; height: 50px; object-fit: contain;" 
+                 alt="Product Image">
+          {% else %}
+            —
+          {% endif %}
+        </td>
+        <td class="d-flex justify-content-center gap-2">
+          <button 
+            class="btn btn-sm btn-warning" 
+            title="Edit"
+            onclick="loadEditForm(this)"
+            data-id="{{ p.id }}"
+            data-name="{{ p.name }}"
+            data-price="{{ p.price }}"
+            data-stock="{{ p.stock }}"
+            data-category="{{ p.category_id }}"
+            data-subcategory="{{ p.sub_category_id or '' }}"
+            data-image="{{ p.image }}"
+            data-description="{{ p.description }}"
+            data-shipping="{{ p.shipping_charge }}"
+          >
+            <i class="bi bi-pencil-square"></i>
+          </button>
+
+          <form method="POST" action="/admin/delete_product/{{ p.id }}" onsubmit="return confirm('Delete this product?')">
+            <button class="btn btn-sm btn-danger" title="Delete">
+              <i class="bi bi-trash"></i>
+            </button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+<!--Pagination---------------->
+{% if pagination.pages > 1 %}
+<nav aria-label="Page navigation" class="mt-4">
+  <ul class="pagination justify-content-center custom-pagination">
+
+    {# First and Previous #}
+    {% if pagination.has_prev %}
+      <li class="page-item">
+        <a class="page-link"
+           href="?page=1
+           {% if selected_category %}&category_id={{ selected_category }}{% endif %}
+           {% if search_query %}&q={{ search_query }}{% endif %}
+           {% if selected_stock %}&stock={{ selected_stock }}{% endif %}">
+          &laquo;
+        </a>
+      </li>
+      <li class="page-item">
+        <a class="page-link"
+           href="?page={{ pagination.prev_num }}
+           {% if selected_category %}&category_id={{ selected_category }}{% endif %}
+           {% if search_query %}&q={{ search_query }}{% endif %}
+           {% if selected_stock %}&stock={{ selected_stock }}{% endif %}">
+          Previous
+        </a>
+      </li>
+    {% else %}
+      <li class="page-item disabled"><span class="page-link">&laquo;</span></li>
+      <li class="page-item disabled"><span class="page-link">Previous</span></li>
+    {% endif %}
+
+    {# Page numbers #}
+    {% for page_num in pagination.iter_pages(left_edge=1, right_edge=1, left_current=2, right_current=2) %}
+      {% if page_num %}
+        {% if page_num == pagination.page %}
+          <li class="page-item active"><span class="page-link">{{ page_num }}</span></li>
+        {% else %}
+          <li class="page-item">
+            <a class="page-link"
+               href="?page={{ page_num }}
+               {% if selected_category %}&category_id={{ selected_category }}{% endif %}
+               {% if search_query %}&q={{ search_query }}{% endif %}
+               {% if selected_stock %}&stock={{ selected_stock }}{% endif %}">
+              {{ page_num }}
+            </a>
+          </li>
+        {% endif %}
+      {% else %}
+        <li class="page-item disabled"><span class="page-link">…</span></li>
+      {% endif %}
+    {% endfor %}
+
+    {# Next and Last #}
+    {% if pagination.has_next %}
+      <li class="page-item">
+        <a class="page-link"
+           href="?page={{ pagination.next_num }}
+           {% if selected_category %}&category_id={{ selected_category }}{% endif %}
+           {% if search_query %}&q={{ search_query }}{% endif %}
+           {% if selected_stock %}&stock={{ selected_stock }}{% endif %}">
+          Next
+        </a>
+      </li>
+      <li class="page-item">
+        <a class="page-link"
+           href="?page={{ pagination.pages }}
+           {% if selected_category %}&category_id={{ selected_category }}{% endif %}
+           {% if search_query %}&q={{ search_query }}{% endif %}
+           {% if selected_stock %}&stock={{ selected_stock }}{% endif %}">
+          &raquo;
+        </a>
+      </li>
+    {% else %}
+      <li class="page-item disabled"><span class="page-link">Next</span></li>
+      <li class="page-item disabled"><span class="page-link">&raquo;</span></li>
+    {% endif %}
+
+  </ul>
+</nav>
+{% endif %}
+
+<!------------------------------>
+
+</div>
+</div>
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+{% endblock %}

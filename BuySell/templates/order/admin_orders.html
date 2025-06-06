@@ -1,0 +1,173 @@
+{% extends 'layout.html' %}
+{% block content %}
+
+<div class="container mt-2 border rounded shadow-sm p-4 bg-white" style="max-width: 1200px;">
+  
+     <div class="d-flex justify-content-between align-items-center mb-3">
+      <div class="label-style"> <a href="{{ url_for('admin_orders') }}">Clear all filters</a></div>
+    <h5 id="form-title" class="section-title m-0">Manage Orders</h5>
+    <div></div>
+  </div> 
+
+<!-- Filter by Order Status & Search -->
+<form method="GET" class="row g-2 align-items-end mb-3">
+  <!-- Status Dropdown -->
+  <div class="col-auto">
+    <label class="label-style">Status</label>
+    <select name="status" class="form-select form-select-sm label-style" onchange="this.form.submit()">
+      <option value="">All</option>
+      <option value="Pending" {{ 'selected' if request.args.get('status') == 'Pending' else '' }}>Pending</option>
+      <option value="Shipped" {{ 'selected' if request.args.get('status') == 'Shipped' else '' }}>Shipped</option>
+      <option value="Delivered" {{ 'selected' if request.args.get('status') == 'Delivered' else '' }}>Delivered</option>
+    </select>
+  </div>
+
+  <!-- Search Input -->
+  <div class="col-auto">
+    <label class="label-style">Order ID</label>
+    <div class="input-group input-group-sm">
+      <input type="text" name="q" value="{{ request.args.get('q', '') }}" class="form-control" placeholder="Search by Order ID">
+      <button class="btn btn-outline-secondary" type="submit" title="Search">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </div>
+</form>
+
+<!--------------------------------->
+
+  <div class="table-responsive">
+    <table class="table table-bordered text-center menu-style">
+    <thead class="orders-header">        <tr>
+          <th>S.No</th>
+          <th>Order ID</th>
+          <th>Customer</th>
+          <th>Status</th>
+          <th>Change Status</th>
+          <th>Download</th>
+        </tr>
+      </thead>
+      <tbody class="label-style">
+        {% for order in orders %}
+        <tr>
+          <td>{{ (pagination.page - 1) * pagination.per_page + loop.index }}</td>
+          <td><a href="/admin/order/{{ order.id }}">{{ order.order_id }}</a></td>
+          <td><a href="/admin/customer/{{ order.customer.id }}">{{ order.customer.name }}</a></td>
+          <td>{{ order.status }}</td>
+          <td>
+          
+            <form class="d-flex justify-content-center align-items-center gap-2 update-status-form"
+      data-order-id="{{ order.id }}"
+      data-current-status="{{ order.status }}">
+  <select name="status" class="form-select form-select-sm status-dropdown"
+        data-order-id="{{ order.id }}"
+        {% if order.status == 'Delivered' %}disabled{% endif %}>
+
+    <option value="Pending" {% if order.status == 'Pending' %}selected{% endif %}>Pending</option>
+    <option value="Shipped" {% if order.status == 'Shipped' %}selected{% endif %}>Shipped</option>
+    <option value="Delivered" {% if order.status == 'Delivered' %}selected{% endif %}>Delivered</option>
+  </select>
+
+  <button type="button"
+          class="btn btn-sm btn-success save-status-btn fw-semibold"
+          {% if order.status == 'Delivered' %}disabled{% endif %}
+          data-order-id="{{ order.id }}">
+    <i class="bi bi-save"></i> Save
+  </button>
+</form>
+
+
+          </td>
+          <td> <a href="/invoice/{{ order.id }}" target="_blank" class="btn btn-sm btn-outline-dark ms-2 fw-semibold">
+              <i class="bi bi-download"></i> Invoice
+              </a>
+            </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <!-- Pagination -->
+<nav aria-label="Page navigation" class="mt-4">
+  <ul class="pagination justify-content-center custom-pagination">
+    {% set status_param = '&status=' ~ request.args.get('status') if request.args.get('status') else '' %}
+
+    {% if pagination.has_prev %}
+      <li class="page-item">
+        <a class="page-link" href="?page=1{{ status_param }}">&laquo;</a>
+      </li>
+      <li class="page-item">
+        <a class="page-link" href="?page={{ pagination.prev_num }}{{ status_param }}">Previous</a>
+      </li>
+    {% else %}
+      <li class="page-item disabled"><span class="page-link">&laquo;</span></li>
+      <li class="page-item disabled"><span class="page-link">Previous</span></li>
+    {% endif %}
+
+    {% for page_num in pagination.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=1) %}
+      {% if page_num %}
+        {% if page_num == pagination.page %}
+          <li class="page-item active"><span class="page-link">{{ page_num }}</span></li>
+        {% else %}
+          <li class="page-item">
+            <a class="page-link" href="?page={{ page_num }}{{ status_param }}">{{ page_num }}</a>
+          </li>
+        {% endif %}
+      {% else %}
+        <li class="page-item disabled"><span class="page-link">…</span></li>
+      {% endif %}
+    {% endfor %}
+
+    {% if pagination.has_next %}
+      <li class="page-item">
+        <a class="page-link" href="?page={{ pagination.next_num }}{{ status_param }}">Next</a>
+      </li>
+      <li class="page-item">
+        <a class="page-link" href="?page={{ pagination.pages }}{{ status_param }}">&raquo;</a>
+      </li>
+    {% else %}
+      <li class="page-item disabled"><span class="page-link">Next</span></li>
+      <li class="page-item disabled"><span class="page-link">&raquo;</span></li>
+    {% endif %}
+  </ul>
+</nav>
+
+
+
+  </div>
+</div>
+
+<!--shipment details model --------------------------------------->
+<div class="modal fade" id="shippingModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form id="shippingForm">
+        <div class="modal-header bg-dark text-white justify-content-between">
+          <h5 class="modal-title menu-style">Shipping Details</h5>
+   <button type="button" class="btn btn-outline-danger btn-sm rounded-circle" data-bs-dismiss="modal" aria-label="Close">
+  <i class="bi bi-x-lg text-danger fw-semibold"></i>
+</button>        </div>
+        <div class="modal-body">
+          <input type="hidden" name="order_id" id="modal_order_id">
+          <div class="mb-3">
+            <label class="label-style">Courier Service</label>
+            <input type="text" name="courier_service" class="form-control label-style" required>
+          </div>
+          <div class="mb-3">
+            <label class="label-style">Tracking Number</label>
+            <input type="text" name="tracking_number" class="form-control label-style" required>
+          </div>
+          <div class="mb-3">
+            <label class="label-style">Estimated Delivery</label>
+            <input type="date" name="estimated_delivery" class="form-control label-style bg-warning-subtle" required>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary px-4" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-dark fw-bold">Update</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

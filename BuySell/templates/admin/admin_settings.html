@@ -1,0 +1,84 @@
+{% extends 'layout.html' %}
+{% block content %} 
+
+<div class="row justify-content-center">
+
+<div class="col-md-8 border rounded shadow-sm p-4 bg-white">
+  <h5 class="section-title mb-4">Configuration</h5>
+
+  <!-- Flash Messages -->
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% for category, message in messages %}
+      <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+    {% endfor %}
+  {% endwith %}
+
+  <form method="POST">
+    <div class="row mb-3">
+      <div class="col-md-6">
+        <label for="site_title" class="label-style">Title</label>
+        <input type="text" name="site_title" id="site_title" class="form-control form-control-sm label-style" value="{{ settings.site_title or '' }}" required>
+      </div>
+      <div class="col-md-6">
+        <label for="tagline" class="label-style">Tag Line</label>
+        <input type="text" name="tagline" id="tagline" class="form-control form-control-sm label-style" value="{{ settings.tagline or '' }}">
+      </div>
+    </div>
+
+    <div class="row mb-3">
+      <div class="col-md-6">
+        <label for="support_phone" class="label-style">Support Phone</label>
+        <input type="text" name="support_phone" id="support_phone" class="form-control form-control-sm label-style" value="{{ settings.support_phone or '' }}" required>
+      </div>
+      <div class="col-md-6">
+        <label for="support_email" class="label-style">Support Email</label>
+        <input type="email" name="support_email" id="support_email" class="form-control form-control-sm label-style" value="{{ settings.support_email or '' }}" required>
+      </div>
+    </div>
+
+    <div class="row mb-3">
+<div class="col-md-6">
+  <label for="admin_email" class="label-style">Admin Email</label>
+  <input type="email" name="admin_email" id="admin_email"
+         class="form-control form-control-sm label-style"
+         value="{{ admin_profile.email if admin_profile else '' }}">
+</div>
+
+<div class="col-md-6">
+  <label class="label-style d-block mb-2">Notifications</label>
+  <div class="p-3 rounded bg-warning-subtle border">
+
+    <div class="form-check form-check-inline me-4">
+      <input class="form-check-input" type="checkbox" name="email_notify" value="1"
+             id="email_notify" {% if settings.email_notify %}checked{% endif %}>
+      <label class="form-check-label label-style" for="email_notify">📧 Email</label>
+    </div>
+
+    <div class="form-check form-check-inline">
+      <input class="form-check-input" type="checkbox" name="sms_notify" value="1"
+             id="sms_notify" {% if settings.sms_notify %}checked{% endif %}>
+      <label class="form-check-label label-style" for="sms_notify">📱 SMS</label>
+    </div>
+
+  </div>
+</div>
+
+
+</div>
+
+
+    <div class="mb-3">
+      <label for="footer_note" class="label-style">Footer Note</label>
+      <textarea name="footer_note" id="footer_note" class="form-control form-control-sm bg-warning-subtle label-style" rows="2">{{ settings.footer_note or '' }}</textarea>
+    </div>
+
+    <div class="text-center">
+      <button type="submit" class="btn btn-dark px-4 py-2 fw-semibold">Update</button>
+    </div>
+  </form>
+</div>
+</div>
+{% endblock %}

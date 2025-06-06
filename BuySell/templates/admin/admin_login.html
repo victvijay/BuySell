@@ -1,0 +1,36 @@
+{% extends 'layout.html' %}
+{% block content %}
+
+<div class="row justify-content-center">
+  <div class="col-md-4 border rounded shadow-sm p-4 bg-white">
+    <h5 class="section-title">Administrator Login</h5>
+ 
+    <form method="POST">
+      <div class="mb-3">
+        <label class="label-style">Username</label>
+        <input type="text" name="username" class="form-control label-style" required>
+      </div>
+      <div class="mb-3">
+        <label class="label-style">Password</label>
+        <input type="password" name="password" class="form-control label-style" required>
+      </div>
+     <div class="text-center">
+  <button class="btn btn-dark px-4 fw-semibold" type="submit">Login </button>
+</div>
+
+<div class="text-center mt-3">
+  <a href="/forgot-password" class="text-decoration-none text-muted label-style">Forgot Password?</a>
+</div>
+
+    </form>
+
+       {% with messages = get_flashed_messages(with_categories=true) %}
+      {% for category, message in messages %}
+        <div class="alert alert-{{ category }}">{{ message }}</div>
+      {% endfor %}
+    {% endwith %}
+    
+  </div>
+</div>
+
+{% endblock %}

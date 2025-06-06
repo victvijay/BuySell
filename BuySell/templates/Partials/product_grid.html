@@ -1,0 +1,120 @@
+
+<div class="container py-2">
+  <div class="row g-4">
+    {% for p in products %}
+    <div class="col-6 col-sm-4 col-md-3">
+      <div class="card h-100 shadow-sm">
+
+        <!-- Clickable area for modal -->
+        <div class="product-click-area" id="add-card" 
+             data-product='{{ {
+               "id": p.id,
+               "name": p.name,
+               "price": p.price,
+               "stock": p.stock,
+               "shipping_charge": p.shipping_charge,
+               "description": p.description,
+               "image": p.image
+             } | tojson | safe }}'
+             >
+          <img src="{{ url_for('static', filename='images/' ~ p.image) }}" class="card-img-top" alt="{{ p.name }}" style="height: 150px; object-fit: contain;">
+          <div class="card-body text-center">
+            <h5 class="card-title menu-style">{{ p.name }}</h5>
+            <p class="card-text text-muted menu-style">₹{{ "%.2f"|format(p.price) }}</p>
+            <small style="color: #0d47a1;" class="fw-semibold label-style">Click for more details</small>
+          </div>
+        </div>
+
+        <!-- Buttons Section (not clickable for modal) -->
+        <div class="card-body text-center">
+          <div class="my-1 d-flex justify-content-center gap-2 align-items-center">
+            <button class="btn btn-sm btn-outline-dark fw-bold qty-minus" data-id="{{ p.id }}">−</button>
+            <span id="qty-{{ p.id }}" class="px-3 py-1 bg-warning bg-opacity-50 rounded fw-semibold">1</span>
+            <button class="btn btn-sm btn-outline-dark fw-bold qty-plus" data-id="{{ p.id }}" data-stock="{{ p.stock }}">+</button>
+          </div>
+          <button type="button" class="btn btn-dark px-4 py-2 fw-semibold add-cart-btn" data-id="{{ p.id }}">
+            Add to cart
+          </button>
+        </div>
+
+      </div>
+    </div>
+    {% else %}
+      <p class="text-muted text-center menu-style">No products found.</p>
+    {% endfor %}
+<!--Pagination start-->
+    {% if pagination.pages > 1 %}
+<div class="d-flex justify-content-center mt-4">
+  <ul class="pagination">
+
+    <li class="page-item {% if not pagination.has_prev %}disabled{% endif %}">
+      <a class="page-link bg-warning text-dark border-0 fw-semibold" href="{{ url_for('home', page=1) }}">« First</a>
+    </li>
+
+    <li class="page-item {% if not pagination.has_prev %}disabled{% endif %}">
+      <a class="page-link bg-warning text-dark border-0 fw-semibold" href="{{ url_for('home', page=pagination.prev_num) }}">‹ Prev</a>
+    </li>
+
+    {% for page_num in pagination.iter_pages(left_edge=1, right_edge=1, left_current=2, right_current=2) %}
+      {% if page_num %}
+        <li class="page-item {% if pagination.page == page_num %}active{% endif %}">
+          <a class="page-link {% if pagination.page == page_num %}bg-dark text-white{% else %}bg-warning text-dark{% endif %} border-0 fw-semibold"
+             href="{{ url_for('home', page=page_num) }}">{{ page_num }}</a>
+        </li>
+      {% else %}
+        <li class="page-item disabled"><span class="page-link border-0">…</span></li>
+      {% endif %}
+    {% endfor %}
+
+    <li class="page-item {% if not pagination.has_next %}disabled{% endif %}">
+      <a class="page-link bg-warning text-dark border-0 fw-semibold" href="{{ url_for('home', page=pagination.next_num) }}">Next ›</a>
+    </li>
+
+    <li class="page-item {% if not pagination.has_next %}disabled{% endif %}">
+      <a class="page-link bg-warning text-dark border-0 fw-semibold" href="{{ url_for('home', page=pagination.pages) }}">Last »</a>
+    </li>
+
+  </ul>
+</div>
+{% endif %}
+<!--Pagination end-->
+
+  </div>
+</div>
+
+<!-- Product Detail Modal -->
+<div class="modal fade" id="productModal" tabindex="-1">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+
+      <!-- Stylish Header -->
+      <div class="modal-header bg-dark text-white justify-content-between">
+        <h5 class="modal-title mx-auto">Product Details</h5>
+   <button type="button" class="btn btn-outline-danger btn-sm rounded-circle" data-bs-dismiss="modal" aria-label="Close">
+  <i class="bi bi-x-lg text-danger fw-semibold"></i>
+</button>
+      </div>
+
+      <div class="modal-body row" style="max-height: 500px; overflow-y: auto;">
+        <!-- Left -->
+        <div class="col-md-5 text-start">
+          <img id="modalImage" src="" alt="Product Image" class="img-fluid mb-3" style="max-height: 200px; object-fit: contain;">
+          <p class="menu-style"><strong>Price:</strong> ₹<span id="modalPrice"></span></p>
+          <p class="menu-style"><strong>Stock:</strong> <span id="modalStock"></span></p>
+          <p class="menu-style"><strong>Shipping:</strong> ₹<span id="modalShipping"></span></p>
+        </div>
+
+        <!-- Right -->
+        <div class="col-md-7">
+          <h6 class="fw-bold text-dark mb-2 border-bottom pb-1 menu-style">Description</h6>
+          <div style="max-height: 300px; overflow-y: auto;">
+            <ul id="modalDescription" class="ps-3 small label-style"></ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>

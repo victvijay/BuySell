@@ -1,0 +1,98 @@
+{% extends 'layout.html' %}
+{% block content %}
+
+<div class="row">
+  <div class="col-12">
+    <h5 class="mb-3 section-title">Dashboard</h5>
+    <div class="row g-4">
+      
+        <div class="col-md-3">
+        <a href="/admin/categories" class="text-decoration-none">
+          <div class="card text-center shadow-sm h-100 dashboard-card">
+            <div class="card-body">
+              <i class="bi bi-tags-fill fs-2 text-success"></i>
+              <h6 class="mt-2 menu-style">Categories</h6>
+              <p class="text-muted small label-style">Add or remove categories</p>
+            </div>
+          </div>
+        </a>
+      </div>
+
+        <div class="col-md-3">
+        <a href="/admin/settings" class="text-decoration-none">
+          <div class="card text-center shadow-sm h-100 dashboard-card">
+            <div class="card-body">
+              <i class="bi bi-gear fs-2 text-secondary"></i>
+              <h6 class="mt-2 menu-style">Configuration</h6>
+              <p class="text-muted small label-style">Site settings</p>
+            </div>
+          </div>
+        </a>
+      </div>
+
+      <div class="col-md-3">
+        <a href="/admin/orders" class="text-decoration-none">
+          <div class="card text-center shadow-sm h-100 dashboard-card">
+            <div class="card-body">
+              <i class="bi bi-bag-check fs-2 text-danger"></i>
+              <h6 class="mt-2 menu-style">Orders</h6>
+              <p class="text-muted small label-style">Manage orders</p>
+            </div>
+          </div>
+        </a>
+      </div>
+
+      <div class="col-md-3">
+        <a href="/admin/products" class="text-decoration-none">
+          <div class="card text-center shadow-sm h-100 dashboard-card">
+            <div class="card-body">
+              <i class="bi bi-box-seam fs-2 text-warning"></i>
+              <h6 class="mt-2 menu-style">Products</h6>
+              <p class="text-muted small label-style">Manage product inventory</p>
+            </div>
+          </div>
+        </a>
+      </div>
+
+      <div class="col-md-3">
+        <a href="/admin/razorpay" class="text-decoration-none">
+          <div class="card text-center shadow-sm h-100 dashboard-card">
+            <div class="card-body">
+              <i class="bi bi-credit-card fs-2 text-info"></i>
+              <h6 class="mt-2 menu-style">RazorPay</h6>
+              <p class="text-muted small label-style">Key settings</p>
+            </div>
+          </div>
+        </a>
+      </div>
+
+      <div class="col-md-3">
+        <a href="/admin/users" class="text-decoration-none">
+          <div class="card text-center shadow-sm h-100 dashboard-card">
+            <div class="card-body">
+              <i class="bi bi-people-fill fs-2 text-primary"></i>
+              <h6 class="mt-2 menu-style">Users</h6>
+              <p class="text-muted small label-style">View all customers</p>
+            </div>
+          </div>
+        </a>
+      </div>
+
+      <!--
+      <div class="col-md-3">
+        <a href="/admin/mail" class="text-decoration-none">
+          <div class="card text-center shadow-sm h-100 dashboard-card">
+            <div class="card-body">
+              <i class="bi bi-envelope-fill fs-2 text-info"></i>
+              <h6 class="mt-2 menu-style">Mail</h6>
+              <p class="text-muted small label-style">Notification settings</p>
+            </div>
+          </div>
+        </a>
+      </div> -->
+
+    </div>
+  </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,36 @@
+{% extends 'layout.html' %}
+{% block content %}
+
+<div class="row justify-content-center">
+
+<div class="col-md-6 bg-white p-4 rounded shadow-sm">
+  <h5 class="section-title mb-4">Razorpay Key</h5>
+
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% for category, message in messages %}
+      <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+    {% endfor %}
+  {% endwith %}
+
+  <form method="POST">
+    <div class="mb-3">
+      <label class="label-style">Key ID</label>
+      <input type="text" name="key_id" class="form-control label-style" value="{{ config.key_id if config else '' }}" required>
+    </div>
+
+    <div class="mb-3">
+      <label class="label-style">Key Secret</label>
+      <input type="password" name="key_secret" class="form-control label-style" placeholder="••••••••••••" required>
+    </div>
+
+    <div class="text-center mt-3">
+      <button type="submit" class="btn btn-dark px-4 fw-semibold">Save</button>
+    </div>
+  </form>
+</div>
+</div>
+
+{% endblock %}

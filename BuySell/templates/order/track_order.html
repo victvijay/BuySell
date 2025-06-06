@@ -1,0 +1,123 @@
+{% extends 'layout.html' %}
+{% block content %}
+<div class="container my-2" style="max-width: 1000px;">
+  <h5 class="section-title">Track Order</h5>
+
+  <!-- Order Info -->
+  <div class="border rounded shadow-sm p-4 bg-white mb-4">
+    <div class="row">
+      <div class="col-md-6 label-style">
+        <h6 class="fw-bold mb-2">Order ID: {{ order.order_id }}</h6>
+        <p class="mb-1">Placed on: {{ order.created_at.strftime('%d %b %Y, %I:%M %p') }}</p>
+        <p class="mb-1">Delivery Address: {{ order.address }}</p>
+      </div>
+      <div class="col-md-6 text-md-end label-style">
+        <p class="mb-1 fw-semibold">Total Amount: ₹{{ "%.2f"|format(order.total_amount) }}</p>
+        <p class="mb-1 fw-semibold">Status: {{ order.status }}</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Order Progress -->
+  <div class="border rounded shadow-sm p-4 bg-white mb-4">
+    <h6 class="fw-bold mb-3 menu-style">Order Progress</h6>
+    <div class="d-flex justify-content-between align-items-center position-relative mt-3">
+      <div class="step {{ 'active' if order.status in ['Pending', 'Shipped', 'Delivered'] else '' }}">
+        <div class="circle">1</div>
+        <div class="label-style">Placed</div>
+      </div>
+      <div class="step {{ 'active' if order.status in ['Shipped', 'Delivered'] else '' }}">
+        <div class="circle">2</div>
+        <div class="label-style">Shipped</div>
+      </div>
+      <div class="step {{ 'active' if order.status == 'Delivered' else '' }}">
+        <div class="circle">3</div>
+        <div class="label-style">Delivered</div>
+      </div>
+      <div class="progress-line position-absolute top-50 start-0 w-100" style="z-index: 0; height: 4px; background-color: #ddd;"></div>
+      <div class="progress-line-active position-absolute top-50 start-0" style="z-index: 1; height: 4px; background-color: #000;"></div>
+    </div>
+  </div>
+
+<!-- Order Items -->
+<div class="border rounded shadow-sm p-4 bg-white">
+  <h6 class="fw-bold mb-3 label-style">Order Items</h6>
+  <table class="table table-bordered align-middle text-center">
+    <thead class="table-light menu-style">
+      <tr>
+        <th>S.No</th>
+        <th>Product</th>
+        <th>Qty</th>
+        <th>Price</th>
+        <th>Subtotal</th>
+      </tr>
+    </thead>
+    <tbody class="label-style">
+      {% set total = 0 %}
+      {% for item in order.items %}
+      {% set subtotal = item.price * item.quantity %}
+      {% set total = total + subtotal %}
+      <tr>
+        <td>{{ loop.index }}</td>
+        <td>{{ item.product.name }}</td>
+        <td>{{ item.quantity }}</td>
+        <td>₹{{ "%.2f"|format(item.price) }}</td>
+        <td>₹{{ "%.2f"|format(subtotal) }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <div class="mt-4">
+    <div class="d-flex justify-content-between label-style">
+  <span>Subtotal</span>
+  <span>₹{{ "%.2f"|format(order.total_amount - order.shipping_total) }}</span>
+</div>
+  <div class="d-flex justify-content-between label-style">
+  <span>Shipping</span>
+  <span>₹{{ "%.2f"|format(order.shipping_total) }}</span>
+</div>
+<hr>
+<div class="d-flex justify-content-between fw-bold menu-style">
+  <span>Total</span>
+  <span>₹{{ "%.2f"|format(order.total_amount) }}</span>
+</div>
+
+  </div>
+</div>
+
+<!-- Shipment and Delivery Details -->
+<div class="row mt-4">
+  <!-- Shipment Details -->
+  <div class="col-md-6">
+    <div class="border rounded shadow-sm p-4 bg-white h-100">
+      <h6 class="fw-bold mb-3 menu-style">Shipment Details</h6>
+      <p class="label-style"><strong>Shipment Date:</strong> {{ order.shipment_date.strftime('%d %b %Y') if order.shipment_date else '—' }}</p>
+      <p class="label-style"><strong>Courier Service:</strong> {{ order.courier_service or '—' }}</p>
+      <p class="label-style"><strong>Tracking Number:</strong> {{ order.tracking_number or '—' }}</p>
+      <p class="label-style"><strong>Estimated Delivery:</strong> {{ order.estimated_delivery.strftime('%d %b %Y') if order.estimated_delivery else '—' }}</p>
+    </div>
+  </div>
+
+  <!-- Delivery Details -->
+  <div class="col-md-6">
+    <div class="border rounded shadow-sm p-4 bg-white h-100">
+      <h6 class="mb-3 menu-style">Delivery Details</h6>
+      <p class="label-style"><strong>Delivered On:</strong> {{ order.delivered_date.strftime('%d %b %Y') if order.delivered_date else '—' }}</p>
+    </div>
+  </div>
+</div>
+
+
+  <div class="mt-4">
+    <a href="/orders" class="btn btn-dark px-4">← Back to Orders</a>
+  </div>
+</div>
+
+<style>
+  .label {
+    margin-top: 8px;
+    font-size: 14px;
+  }
+</style>
+{% endblock %}
