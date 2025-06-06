@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Invoice</title>
+  <style>
+    body { font-family: Arial, sans-serif; font-size: 14px; }
+    .container { width: 700px; margin: auto; padding: 20px; border: 1px solid #ccc; }
+    h3, h4 { margin-bottom: 0; }
+    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+    th, td { padding: 8px; border: 1px solid #ddd; }
+    thead th { background-color: #f8f9fa; }
+    .fw-bold { font-weight: bold; }
+    .summary { margin-top: 20px; }
+    .summary div { display: flex; justify-content: space-between; margin-bottom: 5px; }
+    .header-line { border-top: 2px solid #000; margin-top: 5px; margin-bottom: 20px; }
+  </style>
+</head>
+<body>
+<div class="container">
+
+  <div class="d-flex justify-content-between align-items-center mb-3">
+  <h2 class="fw-bold m-0">{{ APP_NAME }}</h2>
+  <strong>Invoice Number:</strong> {{ order.invoice_number or '—' }}
+</div>
+
+    <table style="margin-top: 20px;">
+    <tr>
+      <td>
+        <strong>Order details</Strong><br>
+        <strong>Order ID: </strong>{{ order.order_id }} <br>
+        <strong>Order Date:</strong> {{ order.created_at.strftime('%d %b %Y') }}<br>
+      </td>
+    </tr>
+  </table>
+
+  <table style="margin-top: 20px;">
+    <tr>
+      <td>
+        <strong>Shipping Address:</strong><br>
+        <strong>Name:</strong>{{ order.customer.name }}<br>
+        {{ order.address }}<br>
+        <strong>Email: </strong>{{ order.customer.email }}<br>
+        <strong>Phone: </strong>{{ order.customer.phone }}
+      </td>
+    </tr>
+  </table>
+
+  <table>
+    <thead>
+      <tr>
+        <th>S.No</th>
+        <th>Product</th>
+        <th>Qty</th>
+        <th>Price</th>
+        <th>Subtotal</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% set total = 0 %}
+      {% for item in order.items %}
+      {% set subtotal = item.price * item.quantity %}
+      {% set total = total + subtotal %}
+      <tr>
+        <td>{{ loop.index }}</td>
+        <td>{{ item.product.name }}</td>
+        <td>{{ item.quantity }}</td>
+        <td>Rs.{{ "%.2f"|format(item.price) }}</td>
+        <td>Rs.{{ "%.2f"|format(subtotal) }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <div class="summary">
+    <div><strong>Subtotal: </strong><span>Rs.{{ "%.2f"|format(order.total_amount - order.shipping_total) }}</span>
+    <br>    
+    <strong>Shipping: </strong><span>Rs.{{ "%.2f"|format(order.shipping_total) }}</span>
+    </div>
+    <hr>
+    <div class="fw-bold"><strong>Total: </strong><span>Rs.{{ "%.2f"|format(order.total_amount) }}</span></div>
+  </div>
+
+  <div class="text-center mt-4">
+    <small class="text-muted">This is a computer-generated invoice. No signature required.</small>
+  </div>
+</div>
+</body>
+</html>

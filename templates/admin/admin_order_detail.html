@@ -1,0 +1,111 @@
+{% extends 'layout.html' %}
+{% block content %}
+
+<div class="container border rounded shadow-sm p-4 bg-white" style="max-width: 1000px;">
+
+<div class="container mt-4">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h5 id="form-title" class="section-title m-0">Order details</h5>
+    <div><a href="/admin/orders" class="btn btn-dark me-2">← Back to Manage Orders</a></div>
+  </div>
+
+  <!-- Order & Payment Info Side by Side -->
+  <div class="row g-3 mb-4">
+    <!-- Order Details (Left) -->
+    <div class="col-md-6">
+      <div class="border rounded shadow-sm p-4 bg-white h-100 label-style"> 
+        <p><strong>Order ID:</strong> {{ order.order_id }}</p>
+        <p><strong>Customer:</strong> <a href="/admin/customer/{{ order.customer.id }}">{{ order.customer.name }}</a></p>
+        <p><strong>Address:</strong> {{ order.address }}</p>
+        <p><strong>Status:</strong> {{ order.status }}</p>
+        <p><strong>Placed On:</strong> {{ order.created_at.strftime('%d %b %Y, %I:%M %p') }}</p>
+      </div>
+    </div>
+
+    <!-- Razorpay Details (Right) -->
+    {% if order.transaction %}
+    <div class="col-md-6">
+      <div class="border rounded shadow-sm p-4 bg-white h-100 label-style">
+        <h6 class="fw-bold mb-3 menu-style">Razorpay Payment</h6>
+        <p><strong>Payment ID:</strong> {{ order.transaction.razorpay_payment_id }}</p>
+        <p><strong>Order ID:</strong> {{ order.transaction.razorpay_order_id }}</p>
+        <p><strong>Status:</strong> {{ order.transaction.status }}</p>
+        <p><strong>Method:</strong> {{ order.transaction.payment_method or '—' }}</p>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+
+  <!-- Order Items Table -->
+  <div class="border rounded shadow-sm p-4 bg-white">
+    <h6 class="fw-bold mb-3 menu-style">Order Items</h6>
+    <table class="table table-bordered align-middle text-center">
+      <thead class="table-light menu-style">
+        <tr>
+          <th>S.No</th>
+          <th>Product</th>
+          <th>Qty</th>
+          <th>Price</th>
+          <th>Subtotal</th>
+        </tr>
+      </thead>
+      <tbody class="label-style">
+        {% set total = 0 %}
+        {% for item in order.items %}
+        {% set subtotal = item.price * item.quantity %}
+        {% set total = total + subtotal %}
+        <tr>
+          <td>{{ loop.index }}</td>
+          <td>{{ item.product.name }}</td>
+          <td>{{ item.quantity }}</td>
+          <td>₹{{ "%.2f"|format(item.price) }}</td>
+          <td>₹{{ "%.2f"|format(subtotal) }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <!-- Totals -->
+    <div class="mt-4">
+      <div class="d-flex justify-content-end label-style">
+        <span><strong>Subtotal:   </strong> </span>
+        <span>₹{{ "%.2f"|format(order.total_amount - order.shipping_total) }}</span>
+      </div>
+      <div class="d-flex justify-content-end label-style">
+        <span><strong>Shipping:   </strong> </span>
+        <span>₹{{ "%.2f"|format(order.shipping_total) }}</span>
+      </div>
+      <hr>
+      <div class="d-flex justify-content-end fw-bold menu-style">
+        <span>Total: </span>
+        <span>₹{{ "%.2f"|format(order.total_amount) }}</span>
+      </div>
+    </div>
+
+<!-- Shipment & Delivery Info Section -->
+<div class="row g-3 mt-4">
+  <!-- Shipment Details -->
+  <div class="col-md-6">
+    <div class="border rounded shadow-sm p-4 bg-white h-100 label-style">
+      <h6 class="fw-bold mb-3 menu-style">Shipment Details</h6>
+      <p><strong>Shipment Date:</strong> {{ order.shipment_date.strftime('%d %b %Y') if order.shipment_date else '—' }}</p>
+      <p><strong>Courier Service:</strong> {{ order.courier_service or '—' }}</p>
+      <p><strong>Tracking Number:</strong> {{ order.tracking_number or '—' }}</p>
+      <p><strong>Estimated Delivery:</strong> {{ order.estimated_delivery.strftime('%d %b %Y') if order.estimated_delivery else '—' }}</p>
+    </div>
+  </div>
+
+  <!-- Delivery Details -->
+  <div class="col-md-6">
+    <div class="border rounded shadow-sm p-4 bg-white h-100 label-style">
+      <h6 class="fw-bold mb-3 menu-style">Delivery Details</h6>
+      <p><strong>Delivered Date:</strong> {{ order.delivered_date.strftime('%d %b %Y') if order.delivered_date else '—' }}</p>
+    </div>
+  </div>
+</div>
+
+
+  </div>
+</div>
+</div>
+{% endblock %}

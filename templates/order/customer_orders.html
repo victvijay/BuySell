@@ -1,0 +1,125 @@
+{% extends 'layout.html' %}
+{% block content %}  
+
+<div class="container my-2" style="max-width: 1000px;">
+  <h5 class="section-title text-center mb-4">Your Orders History</h5>
+
+  <form method="GET" class="d-flex justify-content-center align-items-center gap-2 mb-4" style="max-width: 500px; margin: 0 auto;">
+  <input type="text" name="q" value="{{ request.args.get('q', '') }}" class="form-control label-style" placeholder="Search by product name">
+  <button type="submit" class="btn btn-outline-secondary" title="Search">
+    <i class="bi bi-search"></i>
+  </button>
+  {% if request.args.get('q') %}
+    <a href="{{ url_for('customer_orders') }}" class="btn btn-outline-secondary" title="Clear">
+      <i class="bi bi-x-lg"></i>
+    </a>
+  {% endif %}
+</form>
+
+
+  {% if orders %}
+    <div class="vstack gap-3">
+      {% for order in orders %}
+      <div class="card shadow-sm px-3 py-3">
+        <div class="row align-items-center text-center text-md-start">
+
+          <!-- Column 1: Product Image -->
+          <div class="col-md-2 mb-2 mb-md-0">
+            {% set image_path = order.items[0].product.image if order.items[0].product.image else '' %}
+            <img src="{{ url_for('static', filename='images/' ~ image_path) }}" 
+                 class="img-thumbnail" 
+                 style="width: 70px; height: 70px; object-fit: contain;" 
+                 alt="Product" 
+                 onerror="this.style.display='none';" />
+          </div>
+
+          <!-- Column 2: Product & Order Info -->
+          <div class="col-md-4">
+            <div class="menu-style">{{ order.items[0].product.name }}</div>
+            <div class="small text-muted label-style">Order ID: {{ order.order_id }}</div>
+            <div class="small text-muted label-style">Placed: {{ order.created_at.strftime('%d %b %Y, %I:%M %p') }}</div>
+          </div>
+
+          <!-- Column 3: Total & Status -->
+          <div class="col-md-3 mt-md-0 menu-style">
+            <div><strong>Total:</strong> ₹{{ "%.2f"|format(order.total_amount) }}</div>
+            <div><strong>Status:</strong> {{ order.status }}</div>
+          </div>
+
+          <!-- Column 4: Actions -->
+        <div class="col-md-3">
+  <div class="d-flex flex-column gap-1">
+    <a href="/track_order/{{ order.order_id }}" class="text-decoration-none small label-style">
+      <i class="bi bi-info-circle"></i> Full Details
+    </a>
+    <a href="/invoice/{{ order.id }}" target="_blank" class="text-decoration-none small label-style">
+      <i class="bi bi-download"></i> Invoice
+    </a>
+<a href="/contact?order_id={{ order.order_id }}&product={{ order.items[0].product.name }}"
+   class="text-decoration-none small label-style">
+  <i class="bi bi-question-circle"></i> Get Help
+</a>
+
+
+  </div>
+</div>
+
+
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+
+    <!--Pagination -->
+     <nav aria-label="Page navigation" class="mt-4">
+  <ul class="pagination justify-content-center custom-pagination">
+    {% set search_param = '&q=' ~ search_query if search_query else '' %}
+
+    {% if orders.has_prev %}
+      <li class="page-item">
+        <a class="page-link" href="?page=1{{ search_param }}">&laquo;</a>
+      </li>
+      <li class="page-item">
+        <a class="page-link" href="?page={{ orders.prev_num }}{{ search_param }}">Previous</a>
+      </li>
+    {% else %}
+      <li class="page-item disabled"><span class="page-link">&laquo;</span></li>
+      <li class="page-item disabled"><span class="page-link">Previous</span></li>
+    {% endif %}
+
+    {% for page_num in orders.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=1) %}
+      {% if page_num %}
+        {% if page_num == orders.page %}
+          <li class="page-item active"><span class="page-link">{{ page_num }}</span></li>
+        {% else %}
+          <li class="page-item">
+            <a class="page-link" href="?page={{ page_num }}{{ search_param }}">{{ page_num }}</a>
+          </li>
+        {% endif %}
+      {% else %}
+        <li class="page-item disabled"><span class="page-link">…</span></li>
+      {% endif %}
+    {% endfor %}
+
+    {% if orders.has_next %}
+      <li class="page-item">
+        <a class="page-link" href="?page={{ orders.next_num }}{{ search_param }}">Next</a>
+      </li>
+      <li class="page-item">
+        <a class="page-link" href="?page={{ orders.pages }}{{ search_param }}">&raquo;</a>
+      </li>
+    {% else %}
+      <li class="page-item disabled"><span class="page-link">Next</span></li>
+      <li class="page-item disabled"><span class="page-link">&raquo;</span></li>
+    {% endif %}
+  </ul>
+</nav>
+
+
+  {% else %}
+    <p class="text-muted text-center">You haven't placed any orders yet.</p>
+  {% endif %}
+</div>
+
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+{% endblock %}

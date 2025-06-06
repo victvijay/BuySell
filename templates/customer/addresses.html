@@ -1,0 +1,118 @@
+{% extends 'layout.html' %}
+{% block content %}
+
+  <div class="row justify-content-center">
+    <!-- Address Cards Section -->
+     <h5 class="section-title">My Addresses</h5>
+ <div class="col-10" id="saved-addresses">
+  <div class="row gx-4 gy-4">
+     
+        {% if not show_form and not edit_address %}
+        <!-- Saved Addresses -->
+        {% for addr in addresses %}
+<div class="col-sm-6 col-md-3 d-flex">
+          <div class="card p-3 h-100" id="add-card">
+            <h5 class="section-title">{{ addr.name }}</h5>
+            <p class="mb-1 label-style">{{ addr.line1 }}, {{ addr.line2 }}</p>
+            <p class="mb-1 label-style">{{ addr.landmark }} </p>
+            <p class="mb-1 label-style">{{ addr.city }}, {{ addr.state }} </p>
+             <p class="mb-1 label-style"> {{ addr.pincode }}</p>
+            <p class="mb-1 label-style">📞 {{ addr.phone }}</p>
+
+            <div class="d-flex justify-content-between mt-2">
+              <a href="/addresses?edit_id={{ addr.id }}" class="btn btn-dark px-4 py-2 fw-semibold">Edit</a>
+              <form method="POST" action="/delete_address/{{ addr.id }}" onsubmit="return confirm('Delete this address?');">
+                <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete">
+                  <i class="bi bi-trash"></i>
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+        {% endif %}
+
+           {% if addresses|length < 10 and not show_form and not edit_address %}
+        <!-- Add New Address Card -->
+<div class="col-sm-6 col-md-4 d-flex">
+          <div class="card p-3 h-100 border-dashed text-center" id="add-card" onclick="location.href='?show_form=1'">
+            <div class="card-body d-flex justify-content-center align-items-center">
+              <div>
+                <h1>➕</h1>
+                <p class="mb-0 menu-style">Add New Address</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        {% endif %}
+
+      </div>
+    </div>
+
+    <!-- Add/Edit Address Form -->
+    {% if show_form or edit_address %}
+    <div class="row justify-content-start">
+    <div class="col-md-9">
+      <div class="border rounded shadow-sm p-4 bg-white">
+          <h5 class="section-title"> {{ 'Edit Address' if edit_address else 'Add Address' }}</h5>
+        {% if show_form or edit_address %}
+          <form method="POST" action="/addresses" class="row g-3">
+            <input type="hidden" name="form_type" value="{{ 'edit' if edit_address else 'add' }}">
+            {% if edit_address %}
+            <input type="hidden" name="address_id" value="{{ edit_address.id }}">
+            {% endif %}
+
+            <div class="col-md-6">
+              <label class="label-style">Name</label>
+              <input type="text" name="name" class="form-control label-style" value="{{ edit_address.name if edit_address else '' }}" required>
+            </div>
+
+            <div class="col-md-6">
+              <label class="label-style">Phone</label>
+              <input type="text" name="phone" class="form-control label-style" value="{{ edit_address.phone if edit_address else '' }}" required>
+            </div>
+
+            <div class="col-md-6">
+              <label class="label-style">Address Line 1</label>
+              <input type="text" name="line1" class="form-control label-style" value="{{ edit_address.line1 if edit_address else '' }}" required>
+            </div>
+
+            <div class="col-md-6">
+              <label class="label-style">Address Line 2</label>
+              <input type="text" name="line2" class="form-control label-style" value="{{ edit_address.line2 if edit_address else '' }}">
+            </div>
+
+            <div class="col-md-6">
+              <label class="label-style">Landmark</label>
+              <input type="text" name="landmark" class="form-control label-style" value="{{ edit_address.landmark if edit_address else '' }}">
+            </div>
+
+            <div class="col-md-6">
+              <label class="label-style">Pincode</label>
+              <input type="text" name="pincode" class="form-control label-style" value="{{ edit_address.pincode if edit_address else '' }}" required>
+            </div>
+
+            <div class="col-md-6">
+              <label class="label-style">City</label>
+              <input type="text" name="city" class="form-control label-style" value="{{ edit_address.city if edit_address else '' }}">
+            </div>
+
+            <div class="col-md-6">
+              <label class="label-style">State</label>
+              <input type="text" name="state" class="form-control label-style" value="{{ edit_address.state if edit_address else '' }}">
+            </div>
+
+            <div class="mt-3 d-flex justify-content-center gap-2 ">
+              <a href="/addresses" class="btn btn-outline-secondary px-4 py-2">Cancel</a>
+              <button type="submit" class="btn btn-dark px-4 py-2 fw-semibold">{{ 'Update' if edit_address else 'Save' }}</button>
+            </div>
+          </form>
+          {% endif %}
+          </div>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+{% endblock %}

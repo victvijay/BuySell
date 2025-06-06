@@ -1,0 +1,40 @@
+{% extends 'layout.html' %}
+{% block content %}
+  <div class="row justify-content-center">
+    <div class="col-md-4 bg-white p-4 rounded shadow-sm">
+    <h5 class="section-title mb-4">My Profile</h5>
+
+      <!-- Flash Messages -->
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% for category, message in messages %}
+          <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+        {% endfor %}
+      {% endwith %}
+
+      <form method="POST" action="/profile">
+        <div class="mb-3">
+          <label class="label-style">Name</label>
+          <input type="text" class="form-control readonly-field label-style" value="{{ customer.name }}" readonly>
+        </div>
+
+        <div class="mb-3">
+          <label class="label-style">Email</label>
+          <input type="email" class="form-control readonly-field label-style" value="{{ customer.email }}" readonly>
+        </div>
+
+        <div class="mb-3">
+          <label class="label-style">Phone</label>
+          <input type="text" name="phone" class="form-control label-style" value="{{ customer.phone or '' }}" required>
+        </div>
+
+        <div class="text-center">
+          <button type="submit" class="btn btn-dark px-4 py-2 fw-semibold">Update</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+{% endblock %}

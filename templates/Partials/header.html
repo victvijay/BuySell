@@ -1,0 +1,158 @@
+<!-- Top Bar -->
+<div class="top-bar bg-light py-1 small text-muted border-bottom">
+  <div class="container d-flex justify-content-between">
+    <div>
+    {% if session.get('is_admin') %}  
+      <span class="text-dark text-decoration-none d-flex align-items-center label-style">{{ APP_VERSION }}</span>
+    {% endif %}  
+    <!--  <a href="#" class="text-muted me-3">About Us</a>
+      <a href="#" class="text-muted me-3">Contacts</a>
+      <a href="#" class="text-muted me-3">Store Location</a>
+      <a href="/track" class="text-muted me-3">Track Order</a>
+      <a href="#" class="text-muted">Blog</a> -->
+    </div> 
+
+<div class="d-flex align-items-center">
+  {% if session.get('is_admin') %}
+    <i class="bi bi-person-fill me-2"></i>
+    <span class="text-dark fw-bold text-decoration-none d-flex align-items-center">Admin</span>
+
+    <span class="mx-2 fw-bold" style="font-size: 1.2rem;">|</span>
+    <a href="/logout" class="text-danger fw-bold text-decoration-none d-flex align-items-center">
+      <span>Logout</span>
+    </a>
+
+  {% elif session.get('customer_name') %}
+    <i class="bi bi-person-fill me-2"></i>
+    <span class="text-dark fw-bold text-decoration-none d-flex align-items-center label-style">{{ session['customer_name'] }}</span>
+    <span class="mx-2 fw-bold" style="font-size: 1.2rem;">|</span>
+    
+    <!-- My Account Dropdown -->
+    <a class="nav-link dropdown-toggle text-dark" href="#" role="button" data-bs-toggle="dropdown">
+    <span class="align-items-center label-style">My Account </span>
+    </a>
+ 
+    <ul class="dropdown-menu dropdown-menu-end">
+      <li><a class="dropdown-item label-style" href="/orders">🧾 Orders</a></li>
+      <li><a class="dropdown-item label-style" href="/profile">👤 Profile</a></li>
+      <li><a class="dropdown-item label-style" href="/addresses">🏠 Addresses</a></li>
+      <li><a class="dropdown-item label-style" href="/change-password">🔒 Change Password</a></li>
+    </ul>
+  
+
+    <span class="mx-2 fw-bold" style="font-size: 1.2rem;">|</span>
+    <a href="/logout" class="text-danger fw-bold text-decoration-none d-flex align-items-center">
+      <span class="label-style">Logout</span>
+    </a>
+
+  {% else %}
+    <a href="/login" class="text-dark text-decoration-none d-flex align-items-center">
+      <i class="bi bi-person-fill me-2"></i> <span class="label-style">Login</span>
+    </a>
+  {% endif %}
+</div>
+
+
+  </div>
+</div>
+
+<!-- Header -->
+<div class="main-header py-3 border-bottom">
+  <div class="container d-flex justify-content-between align-items-center">
+    <!-- <div class="logo fw-bold fs-3">{{ site_settings.site_title }}</div> -->
+     <div class="logo"><img src="{{ url_for('static', filename='images/Logo.png') }}"></div>
+
+     {% if not session.get('admin') %}
+<form action="/" method="GET" class="w-50 mx-auto">
+  <div class="input-group">
+    <input type="text" name="q" class="form-control menu-style" placeholder="Search products" value="{{ request.args.get('q', '') }}">
+    <button class="input-group-text bg-warning text-dark" type="submit">
+      <i class="bi bi-search"></i>
+    </button>
+  </div>
+</form>
+    {% endif %}
+    
+    <div class="text-end">
+      <div class="small text-muted label-style">Customer Service</div>
+      <div class="fw-bold fs-8 label-style"> {{ site_settings.support_email }} </div>
+    </div>
+  </div>
+</div>
+
+<!-- Navigation -->
+<div class="menu-bar bg-warning py-2">
+  <div class="container d-flex align-items-center">
+
+    {% if not session.get('admin') %}
+  <!-- SHOP BY CATEGORY DROPDOWN -->
+<div class="dropdown me-4">
+  <button class="shop-category-btn dropdown-toggle" type="button" data-bs-toggle="dropdown">
+    Category
+  </button>
+ 
+<!-- SHOP BY CATEGORY DROP DOWN-->
+<ul class="dropdown-menu shop-category-menu">
+  {% for cat in categories %}
+    {% if cat.subcategories %}
+      <li class="dropdown-submenu position-relative">
+        <a class="dropdown-item dropdown-toggle {% if request.args.get('category_id')|int == cat.id %}active-category{% endif %}" href="#">
+         <label class="menu-style"> {{ cat.name }} </label>
+        </a>
+        <ul class="dropdown-menu position-absolute start-100 top-0 mt-0">
+          {% for sub in cat.subcategories %}
+            <li>
+              <a class="dropdown-item {% if request.args.get('sub_category_id')|int == sub.id %}active-category{% endif %}" href="/?sub_category_id={{ sub.id }}">
+              <label class="menu-style">{{ sub.name }}</label></a>
+            </li>
+          {% endfor %}
+        </ul>
+      </li>
+    {% else %}
+      <li>
+        <a class="dropdown-item {% if request.args.get('category_id')|int == cat.id %}active-category{% endif %}" 
+           href="/?category_id={{ cat.id }}">
+          {{ cat.name }}
+        </a>
+      </li>
+    {% endif %}
+  {% endfor %}
+
+  <li><hr class="dropdown-divider"></li>
+  <li>
+    <a class="dropdown-item {% if not request.args.get('category_id') and not request.args.get('subcategory_id') %}active-category{% endif %}" href="/">
+      <label class="menu-style">All</label>
+    </a>
+  </li>
+</ul>
+
+<!------------------------------------>
+
+</div>
+
+
+    <ul class="nav me-auto">
+      <li class="nav-item"><a class="nav-link" href="/"><label class="menu-style">Home</label></a></li> 
+    </ul>
+    <div class="d-flex align-items-center">
+ 
+
+<a href="/cart" class="cart-link d-flex align-items-center text-decoration-none text-dark me-3 position-relative">
+  <i class="bi bi-cart" style="font-size: 1.4rem;"></i>
+  <span class="ms-2 menu-style">Cart</span>
+  <span id="cartCount" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+    0
+  </span>
+</a>
+{% endif %}
+
+{% if session.get('admin') %}
+   <ul class="nav me-auto">
+      <li class="nav-item"><a class="nav-link text-dark" href="/admin/dashboard"><label class="menu-style">Dashboard</label></a></li>  
+      <li class="nav-item"><a class="nav-link text-dark" href="/admin/change-password"><label class="menu-style">Change-Password</label></a></li>
+    </ul>
+{% endif %}
+
+    </div>
+  </div>
+</div>

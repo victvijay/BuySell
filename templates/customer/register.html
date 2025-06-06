@@ -1,0 +1,81 @@
+{% extends 'layout.html' %}
+{% block content %}
+
+<div class="row justify-content-center">
+  <div class="col-md-4 border rounded shadow-sm p-4 bg-white">
+    <!-- Registration Form -->
+     <h5 class="section-title">New User</h5>
+    <form method="POST" action="/register" onsubmit="return validateRegistrationForm()">
+      <div class="mb-3">
+        <label for="name" class="label-style">Full Name</label>
+        <input type="text" class="form-control label-style" name="name" required>
+      </div>
+
+      <div class="mb-3">
+        <label for="email" class="label-style">Email Address</label>
+        <input type="email" class="form-control label-style" name="email" required>
+      </div>
+
+      <div class="mb-3">
+        <label for="phone" class="label-style">Phone Number</label>
+        <input type="text" class="form-control label-style" name="phone" required pattern="[0-9]{10}" title="Enter a 10-digit mobile number">
+      </div>
+
+      <div class="mb-3">
+        <label for="password" class="label-style">Password</label>
+        <input type="password" class="form-control label-style" id="password" name="password" required>
+      </div>
+
+      <div class="mb-3">
+        <label for="confirm_password" class="label-style">Confirm Password</label>
+        <input type="password" class="form-control label-style" id="confirm_password" name="confirm_password" required>
+      </div>
+
+      <div id="password-error" class="text-danger mb-3"></div>
+
+      <div class="text-center">
+  <button type="submit" class="btn btn-dark px-4 py-2 fw-semibold">Register</button>
+</div>
+
+      <p class="text-center mt-3 label-style">Already have an account? <a href="/login" class="label-style">Login here</a></p>
+    </form>
+
+        <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+  </div>
+</div>
+
+<script>
+function validateRegistrationForm() {
+  const password = document.getElementById('password').value;
+  const confirm = document.getElementById('confirm_password').value;
+  const errorDiv = document.getElementById('password-error');
+
+  const regex = /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]).{8,}$/;
+
+  if (!regex.test(password)) {
+    errorDiv.innerText = "Password must be at least 8 characters with 1 uppercase, 1 number, and 1 special character.";
+    return false;
+  }
+
+  if (password !== confirm) {
+    errorDiv.innerText = "Passwords do not match.";
+    return false;
+  }
+
+  errorDiv.innerText = "";
+  return true;
+}
+</script>
+
+{% endblock %}
